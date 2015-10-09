@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">MyTest</string>
+    <string name="Start">Start</string>
+    <string name="Stop">Stop</string>
+    <string name="Pause">Pause</string>
+    <string name="Resume">resume</string>
+
+    <string-array name="plans_array">
+        <item>Jogging</item>
+        <item>RUN</item>
+        <item>Walk</item>
+        <item>Yoga</item>
+    </string-array>
 </resources>
