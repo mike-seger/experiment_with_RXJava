@@ -6,7 +6,7 @@
     <NumberPicker
         android:id="@+id/numberpicker_numberpicker"
         android:layout_width="@dimen/_140sdp"
-        android:layout_height="@dimen/_50sdp"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/_20sdp" />
 

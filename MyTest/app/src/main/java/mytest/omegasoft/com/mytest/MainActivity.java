@@ -101,10 +101,11 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.btnStart)
     synchronized void clickStartButton() {
         Intent intent = new Intent(this, TimerActivity.class);
-        intent.putExtra("name", currWorkout.getName());
-        intent.putExtra("workout_time", currWorkout.getWorkoutTime());
-        intent.putExtra("rest_time", currWorkout.getRestTime());
-        intent.putExtra("rounds", currWorkout.getRounds());
+//        intent.putExtra("name", currWorkout.getName());
+//        intent.putExtra("workout_time", currWorkout.getWorkoutTime());
+//        intent.putExtra("rest_time", currWorkout.getRestTime());
+//        intent.putExtra("rounds", currWorkout.getRounds());
+        intent.putExtra("workout", currWorkout);
         startActivity(intent);
     }
 

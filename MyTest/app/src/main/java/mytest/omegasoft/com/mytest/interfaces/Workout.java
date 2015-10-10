@@ -1,13 +1,15 @@
 package mytest.omegasoft.com.mytest.interfaces;
 
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * Created by farhad on 10/10/15.
  */
-public abstract class Workout {
+public abstract class Workout implements Serializable {
 
     //times are by seconds
     @Getter @Setter String name = "worksout";

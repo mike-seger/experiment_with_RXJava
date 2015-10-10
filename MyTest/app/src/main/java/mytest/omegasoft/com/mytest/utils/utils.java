@@ -69,6 +69,9 @@ public class utils {
 
         final NumberPicker numberPicker = (NumberPicker) dialog.findViewById(R.id.numberpicker_numberpicker);
         numberPicker.setValue(defaultTime);
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(30);
+        numberPicker.setWrapSelectorWheel(false);
 
         Button btnOK = (Button) dialog.findViewById(R.id.numberpicker_ok);
         btnOK.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +95,6 @@ public class utils {
     }
 
     public static String timeToString(int time) {
-        return String.format("%d:%02d:%02d", time / 3600, (time % 3600) / 60, (time % 60));
+        return String.format("%02d:%02d", (time % 3600) / 60, (time % 60));
     }
 }

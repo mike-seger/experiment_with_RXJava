@@ -1,15 +1,19 @@
 package mytest.omegasoft.com.mytest.callbacks;
 
-import mytest.omegasoft.com.mytest.interfaces.Workout;
-
 public interface TimerCallback {
     void onTimerProgress(long progress, long timeElapsed, long timeRemaining);
 
     void onTrainingStart();
 
-    void onExerciseStart(Workout workout);
+    void onExerciseStart(int time);
 
     void onExerciseFinish();
 
+    void onRestStart(int time);
+
+    void onRestFinish();
+
     void onTrainingFinish(String msg);
+
+    void onPauseTimer(long currenttime);
 }
