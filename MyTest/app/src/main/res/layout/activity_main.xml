@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,55 +16,124 @@
             android:orientation="vertical">
 
             <Spinner
+                android:id="@+id/spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner"
-                android:spinnerMode="dropdown"/>
+                android:spinnerMode="dropdown" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:gravity="center_horizontal"
+                android:gravity="left"
                 android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/btnStart"
-                    android:layout_width="@dimen/_150sdp"
-                    android:layout_height="@dimen/_50sdp"
-                    android:text="@string/Start"
-                    android:textSize="@dimen/_20sdp"
-                    android:layout_gravity="center_horizontal"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/workout_time"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
 
-                <Button
-                    android:id="@+id/btnStop"
-                    android:layout_width="@dimen/_150sdp"
-                    android:layout_height="@dimen/_50sdp"
-                    android:text="@string/Stop"
-                    android:textSize="@dimen/_20sdp"
-                    android:visibility="gone"
-                    android:layout_gravity="center_horizontal"/>
+                <TextView
+                    android:id="@+id/txt_workout_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
 
-                <Button
-                    android:id="@+id/btnPause"
-                    android:layout_width="@dimen/_150sdp"
-                    android:layout_height="@dimen/_50sdp"
-                    android:text="@string/Pause"
-                    android:textSize="@dimen/_20sdp"
-                    android:visibility="gone"
-                    android:layout_gravity="center_horizontal"/>
+                <ImageButton
+                    android:id="@+id/btn_edit_workout_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:background="@android:drawable/ic_menu_edit" />
+
             </LinearLayout>
 
-
-
-            <TextView
-                android:id="@+id/txtText1"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:gravity="left"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/rest_time"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/txt_rest_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+
+                <ImageButton
+                    android:id="@+id/btn_edit_rest_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:background="@android:drawable/ic_menu_edit" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:gravity="left"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/rounds"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/txt_rounds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+
+                <ImageButton
+                    android:id="@+id/btn_edit_rounds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:background="@android:drawable/ic_menu_edit" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnStart"
+                android:layout_width="@dimen/_150sdp"
+                android:layout_height="@dimen/_50sdp"
                 android:layout_gravity="center_horizontal"
-                android:textSize="30sp"
-                android:textColor="@android:color/black"
-                android:layout_marginTop="@dimen/_25sdp"/>
+                android:text="@string/Stop"
+                android:textSize="@dimen/_20sdp"
+                android:visibility="visible" />
 
         </LinearLayout>
     </ScrollView>

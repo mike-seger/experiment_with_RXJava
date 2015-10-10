@@ -10,4 +10,14 @@
         <item>Walk</item>
         <item>Yoga</item>
     </string-array>
+    <string name="title_activity_wimer">WimerActivity</string>
+    <string name="title_activity_timer">TimerActivity</string>
+    <string name="workout_time">Workout Time:</string>
+    <string name="save">Save</string>
+    <string name="cancel">cancel</string>
+    <string name="ok">OK</string>
+    <string name="select_time">Select Time</string>
+    <string name="rest_time">Rest time</string>
+    <string name="rounds">Rounds</string>
+    <string name="app_name">Test Timer APP</string>
 </resources>

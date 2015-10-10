@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <mytest.omegasoft.com.mytest.views.CircleTimerView
+        android:id="@+id/timepicker_circletimerview"
+        android:layout_width="@dimen/_270sdp"
+        android:layout_height="@dimen/_270sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_centerHorizontal="true"/>
+
+
+    <Button
+        android:id="@+id/timepicker_cancel"
+        android:layout_width="@dimen/_240sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_below="@+id/timepicker_circletimerview"
+        android:layout_centerHorizontal="true"
+        android:text="@string/cancel"/>
+
+    <Button
+        android:id="@+id/timepicker_ok"
+        android:layout_width="@dimen/_240sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_below="@+id/timepicker_cancel"
+        android:layout_centerHorizontal="true"
+        android:text="@string/ok"/>
+
+</RelativeLayout>

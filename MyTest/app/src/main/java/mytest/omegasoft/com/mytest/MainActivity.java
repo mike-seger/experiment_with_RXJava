@@ -1,27 +1,25 @@
 package mytest.omegasoft.com.mytest;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import fslogger.lizsoft.lv.fslogger.FSLogger;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import butterknife.OnItemSelected;
+import mytest.omegasoft.com.mytest.callbacks.DialogCallback;
+import mytest.omegasoft.com.mytest.interfaces.Workout;
+import mytest.omegasoft.com.mytest.utils.utils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,22 +27,29 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.spinner)
     Spinner spinner;
 
-    @Bind(R.id.txtText1)
-    TextView txtText1;
+    @Bind(R.id.txt_workout_time)
+    TextView txt_workout_time;
 
-    @Bind(R.id.btnPause)
-    Button btnPause;
+    @Bind(R.id.btn_edit_workout_time)
+    ImageButton btn_edit_workout_time;
 
-    @Bind(R.id.btnStop)
-    Button btnStop;
+    @Bind(R.id.txt_rest_time)
+    TextView txt_rest_time;
+
+    @Bind(R.id.btn_edit_rest_time)
+    ImageButton btn_edit_rest_time;
+
+    @Bind(R.id.txt_rounds)
+    TextView txt_rounds;
+
+    @Bind(R.id.btn_edit_rounds)
+    ImageButton btn_edit_rounds;
 
     @Bind(R.id.btnStart)
     Button btnStart;
 
-    private Boolean isPause = false;
-    private long currentTime = 0;
-
-    Subscription subscription;
+    private ArrayList<Workout> workouts;
+    private Workout currWorkout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,165 +58,74 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        workouts = utils.getEorkouts();
+        setCurrWorkoutByPosition(0);
+
         //Fill Spinner
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.plans_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<Workout> adapter = new ArrayAdapter<Workout>(this, android.R.layout.simple_spinner_item, workouts);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isPause = true;
+    @OnClick(R.id.btn_edit_rest_time)
+    synchronized void clickEditRestTime() {
+        utils.showTimePickerDialog(this, currWorkout.getRestTime(), new DialogCallback() {
+            @Override
+            public void ok(int value) {
+                currWorkout.setRestTime(value);
+                updateUI();
+            }
+        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isPause = true;
+    @OnClick(R.id.btn_edit_workout_time)
+    synchronized void clickEditWorkoutTime() {
+        utils.showTimePickerDialog(this, currWorkout.getWorkoutTime(), new DialogCallback() {
+            public void ok(int value) {
+                currWorkout.setWorkoutTime(value);
+                updateUI();
+            }
+        });
     }
 
-    @OnClick(R.id.btnPause)
-    synchronized void clickPauseButton() {
-        if (isPause) {
-            btnPause.setText(getText(R.string.Pause));
-        } else {
-            btnPause.setText(getText(R.string.Resume));
-        }
-
-        isPause = !isPause;
-    }
-
-    @OnClick(R.id.btnStop)
-    synchronized void clickStopButton() {
-        unSubscribe();
-
-        btnStart.setVisibility(View.VISIBLE);
-        btnPause.setVisibility(View.GONE);
-        btnStop.setVisibility(View.GONE);
+    @OnClick(R.id.btn_edit_rounds)
+    synchronized void clickEditRounds() {
+        utils.showNumberPickerDialog(this, currWorkout.getRounds(), new DialogCallback() {
+            public void ok(int value) {
+                currWorkout.setRounds(value);
+                updateUI();
+            }
+        });
     }
 
     @OnClick(R.id.btnStart)
     synchronized void clickStartButton() {
-        isPause = false;
-        currentTime = 0;
-
-        btnStart.setVisibility(View.GONE);
-        btnPause.setVisibility(View.VISIBLE);
-        btnStop.setVisibility(View.VISIBLE);
-//        Observable.from(getNumbers())
-//                .distinctUntilChanged()
-//                .subscribeOn(Schedulers.io())
-//                .buffer(10, TimeUnit.MILLISECONDS, 2)
-//                .map(new Func1<List<String>, String>() {
-//                    public String call(List<String> l) {
-//                        return "a";
-//                    }
-//                })
-//                .subscribe(new Observer<String>() {
-//                    @Override
-//                    public void onCompleted() {
-//                        FSLogger.w(1, "onCompleted");
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        FSLogger.w(1, "onError e:" + e.getMessage());
-//                    }
-//
-//                    @Override
-//                    public void onNext(String stringObservable) {
-//                        FSLogger.w(1, "onNext stringObservable:" + stringObservable);
-//                    }
-//                });
-
-//        getApps().distinctUntilChanged()
-//                .subscribeOn(Schedulers.computation())
-//                .subscribe(new Observer<String>() {
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        FSLogger.w(1, "onError e:" + e.getMessage());
-//                    }
-//
-//                    @Override
-//                    public void onNext(String s) {
-//                        FSLogger.w(1, "onNext s:" + s);
-//                    }
-//
-//                    @Override
-//                    public void onCompleted() {
-//                        FSLogger.w(1, "onCompleted");
-//                    }
-//                });
-
-        unSubscribe();
-        subscription = Observable.interval(500, TimeUnit.MILLISECONDS)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Long>() {
-                    @Override
-                    public void onCompleted() {
-                        FSLogger.w(1, "onCompleted");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        FSLogger.w(1, "onError e:" + e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(Long aLong) {
-                        if (isPause) return;
-
-                        FSLogger.w(1, "onNext aLong:" + aLong);
-                        currentTime++;
-                        txtText1.setText(String.valueOf(aLong + " - " + currentTime));
-                    }
-                });
-        currentTime++;
-
+        Intent intent = new Intent(this, TimerActivity.class);
+        intent.putExtra("name", currWorkout.getName());
+        intent.putExtra("workout_time", currWorkout.getWorkoutTime());
+        intent.putExtra("rest_time", currWorkout.getRestTime());
+        intent.putExtra("rounds", currWorkout.getRounds());
+        startActivity(intent);
     }
 
-    private void unSubscribe() {
-        if (subscription != null) subscription.unsubscribe();
+    private void setCurrWorkoutByPosition(int position) {
+        currWorkout = workouts.get(position);
+        updateUI();
     }
 
-    private ArrayList<String> getNumbers() {
-        ArrayList<String> result = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            result.add(String.valueOf(i));
-        }
-        return result;
+    private void updateUI() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txt_workout_time.setText(utils.timeToString(currWorkout.getWorkoutTime()));
+                txt_rest_time.setText(utils.timeToString(currWorkout.getRestTime()));
+                txt_rounds.setText(String.valueOf(currWorkout.getRounds()));
+            }
+        });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unSubscribe();
-    }
-
-    private Observable<String> getApps() {
-        return Observable
-                .create(new Observable.OnSubscribe<String>() {
-                    @Override
-                    public void call(Subscriber<? super String> subscriber) {
-                        ArrayList<String> result = new ArrayList<>();
-                        for (int i = 0; i < 100; i++) {
-                            result.add(String.valueOf(i));
-                        }
-                        for (String text : result) {
-
-                            if (subscriber.isUnsubscribed()) {
-                                return;
-                            }
-                            subscriber.onNext(text);
-                        }
-                        if (!subscriber.isUnsubscribed()) {
-                            subscriber.onCompleted();
-                        }
-                    }
-                });
+    @OnItemSelected(R.id.spinner)
+    void onSelectSpinner(AdapterView<?> parent, View view, int position, long id) {
+        setCurrWorkoutByPosition(position);
     }
 }
