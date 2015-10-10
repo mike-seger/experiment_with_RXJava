@@ -11,6 +11,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fslogger.lizsoft.lv.fslogger.FSLogger;
 import mytest.omegasoft.com.mytest.callbacks.TimerCallback;
+import mytest.omegasoft.com.mytest.interfaces.TrainingType;
 import mytest.omegasoft.com.mytest.interfaces.Workout;
 import mytest.omegasoft.com.mytest.utils.TrainingTimer;
 import mytest.omegasoft.com.mytest.views.CircleTimerView;
@@ -54,41 +55,49 @@ public class TimerActivity extends AppCompatActivity {
         circleTimerView.setTime(currWorkout.getWorkoutTime());
 
         FSLogger.w(1, "ffff time:" + currWorkout.getWorkoutTime());
-
     }
 
     private TimerCallback timerCallback = new TimerCallback() {
         @Override
-        public void onTimerProgress(long progress, long timeElapsed, long timeRemaining) {
+        public void onTimerProgress(long progress, long timeElapsed, long timeRemaining, int round, TrainingType trainingType) {
             FSLogger.w(1, "ffff onTimerProgress progress:" + progress + " timeElapsed:" + timeElapsed + " timeRemaining:" + timeRemaining);
+
+            circleTimerView.setTime((int) timeRemaining);
+            circleTimerView.setCurrentStatus(trainingType.toString());
+            circleTimerView.setCurrentRound(round);
+            circleTimerView.refreshView();
         }
 
         @Override
         public void onTrainingStart() {
-            circleTimerView.startTimer();
             FSLogger.w(1, "ffff onTrainingStart");
+//            circleTimerView.startTimer();
         }
 
         @Override
         public void onExerciseStart(int time) {
             FSLogger.w(1, "ffff onExerciseStart");
             circleTimerView.setTime(time);
+//            circleTimerView.startTimer();
         }
 
         @Override
         public void onExerciseFinish() {
             FSLogger.w(1, "ffff onExerciseFinish");
+//            circleTimerView.stopTimer();
         }
 
         @Override
         public void onRestStart(int time) {
             FSLogger.w(1, "ffff onRestStart");
             circleTimerView.setTime(time);
+//            circleTimerView.startTimer();
         }
 
         @Override
         public void onRestFinish() {
             FSLogger.w(1, "ffff onRestFinish");
+//            circleTimerView.stopTimer();
         }
 
         @Override
@@ -98,7 +107,7 @@ public class TimerActivity extends AppCompatActivity {
 
         @Override
         public void onPauseTimer(long currenttime) {
-            circleTimerView.pauseTimer((int) currenttime);
+//            circleTimerView.pauseTimer((int) currenttime);
             FSLogger.w(1, "ffff onPauseTimer");
         }
     };

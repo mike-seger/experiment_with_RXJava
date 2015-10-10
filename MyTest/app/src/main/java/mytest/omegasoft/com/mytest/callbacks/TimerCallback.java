@@ -1,7 +1,9 @@
 package mytest.omegasoft.com.mytest.callbacks;
 
+import mytest.omegasoft.com.mytest.interfaces.TrainingType;
+
 public interface TimerCallback {
-    void onTimerProgress(long progress, long timeElapsed, long timeRemaining);
+    void onTimerProgress(long progress, long timeElapsed, long timeRemaining, int round, TrainingType trainingType);
 
     void onTrainingStart();
 

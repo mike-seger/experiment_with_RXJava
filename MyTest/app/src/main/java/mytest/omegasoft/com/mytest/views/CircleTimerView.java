@@ -15,7 +15,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.Timer;
-import java.util.TimerTask;
+
+import lombok.Getter;
+import lombok.Setter;
 
 public class CircleTimerView extends View {
     private static final String TAG = "CircleTimerView";
@@ -96,11 +98,12 @@ public class CircleTimerView extends View {
     private boolean isInCircleButton;
     private int currentTime; // seconds
     private boolean isStartTimer;
+    @Getter @Setter private String currentStatus = "";
+    @Getter @Setter private int currentRound = 1;
 
     // TimerTask
     private Timer timer = new Timer();
 
-    private TimerTask timerTask;
     // Runt
     private CircleTimerListener circleTimerListener;
     private Handler handler = new Handler() {
@@ -264,7 +267,11 @@ public class CircleTimerView extends View {
         canvas.restore();
         // Timer Text
         canvas.save();
-        canvas.drawText("time", cx, cy + getFontHeight(timerNumberPaint) / 2 + gapBetweenTimerNumberAndText + getFontHeight(timerTextPaint) / 2, timerTextPaint);
+        canvas.drawText(currentStatus, cx, cy + getFontHeight(timerNumberPaint) / 2 + gapBetweenTimerNumberAndText + getFontHeight(timerTextPaint) / 2, timerTextPaint);
+        canvas.restore();
+        //Round Text
+        canvas.save();
+        canvas.drawText("Round:" + currentRound, cx, cy + getFontHeight(timerNumberPaint) / 2 + gapBetweenTimerNumberAndText + getFontHeight(timerTextPaint) / 2 + 60, timerTextPaint);
         canvas.restore();
         super.onDraw(canvas);
     }
@@ -396,36 +403,8 @@ public class CircleTimerView extends View {
         currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
     }
 
-    // Star timer
-    public void startTimer() {
-
-        Log.d(TAG, "startTimer");
-        if (currentRadian > 0 && !isStartTimer) {
-
-            timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    Log.d(TAG, "TimerTask");
-                    handler.obtainMessage().sendToTarget();
-                }
-            };
-            timer.schedule(timerTask, 1000, 1000);
-            isStartTimer = true;
-            if (this.circleTimerListener != null) {
-                this.circleTimerListener.onTimerStart(currentTime);
-            }
-        }
-    }
-
-    // Pause timer
-    public void pauseTimer(int currentTime) {
-        if (isStartTimer) {
-            timerTask.cancel();
-            isStartTimer = false;
-            if (this.circleTimerListener != null) {
-                this.circleTimerListener.onTimerPause(currentTime);
-            }
-        }
+    public void refreshView() {
+        handler.obtainMessage().sendToTarget();
     }
 
     // Set timer listener

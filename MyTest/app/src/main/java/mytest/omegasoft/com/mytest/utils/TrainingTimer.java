@@ -97,8 +97,8 @@ public class TrainingTimer {
 
             msElapsed += interval;
 
-            exerciseTimeRemaining = millisUntilFinished;
-            mTimerCallback.onTimerProgress(millisUntilFinished, (int) Math.round(msElapsed / 1000.0) * 1000, (int) Math.round((msRemain - msElapsed) / 1000.0) * 1000);
+            exerciseTimeRemaining = millisUntilFinished / 1000;
+            mTimerCallback.onTimerProgress(millisUntilFinished, (int) (msElapsed / 1000.0f), (int) (exerciseTimeRemaining), mcurrentRound, mTrainingType);
         }
 
         @Override
@@ -113,6 +113,7 @@ public class TrainingTimer {
                 mTimerCallback.onRestFinish();
 
                 if (mcurrentRound < currWorkout.getRounds()) {
+                    mcurrentRound++;
                     startExercise();
                 } else {
                     mTimerCallback.onTrainingFinish("Training finish");
