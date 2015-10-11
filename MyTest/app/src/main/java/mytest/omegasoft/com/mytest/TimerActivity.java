@@ -6,14 +6,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fslogger.lizsoft.lv.fslogger.FSLogger;
-import mytest.omegasoft.com.mytest.callbacks.TimerCallback;
-import mytest.omegasoft.com.mytest.interfaces.TrainingType;
+import mytest.omegasoft.com.mytest.callbacks.WorkoutCallback;
+import mytest.omegasoft.com.mytest.database.DatabaseHandler;
+import mytest.omegasoft.com.mytest.database.model.History;
 import mytest.omegasoft.com.mytest.interfaces.Workout;
-import mytest.omegasoft.com.mytest.utils.TrainingTimer;
+import mytest.omegasoft.com.mytest.interfaces.WorkoutType;
+import mytest.omegasoft.com.mytest.utils.WorkoutTimer;
 import mytest.omegasoft.com.mytest.views.CircleTimerView;
 
 public class TimerActivity extends AppCompatActivity {
@@ -34,7 +40,7 @@ public class TimerActivity extends AppCompatActivity {
     Button btnStart;
 
     private Workout currWorkout;
-    private TrainingTimer trainingTimer;
+    private WorkoutTimer workoutTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,80 +57,97 @@ public class TimerActivity extends AppCompatActivity {
             finish();
         }
 
-        trainingTimer = new TrainingTimer(timerCallback, currWorkout);
+        workoutTimer = new WorkoutTimer(workoutCallback, currWorkout);
         circleTimerView.setTime(currWorkout.getWorkoutTime());
 
         FSLogger.w(1, "ffff time:" + currWorkout.getWorkoutTime());
     }
 
-    private TimerCallback timerCallback = new TimerCallback() {
+    private WorkoutCallback workoutCallback = new WorkoutCallback() {
         @Override
-        public void onTimerProgress(long progress, long timeElapsed, long timeRemaining, int round, TrainingType trainingType) {
+        public void onTimerProgress(long progress, long timeElapsed, long timeRemaining, int round, WorkoutType workoutType) {
             FSLogger.w(1, "ffff onTimerProgress progress:" + progress + " timeElapsed:" + timeElapsed + " timeRemaining:" + timeRemaining);
 
-            circleTimerView.setTime((int) timeRemaining);
-            circleTimerView.setCurrentStatus(trainingType.toString());
-            circleTimerView.setCurrentRound(round);
-            circleTimerView.refreshView();
+            circleTimerView.refreshView((int) timeRemaining, workoutType.toString(), round);
         }
 
         @Override
         public void onTrainingStart() {
             FSLogger.w(1, "ffff onTrainingStart");
-//            circleTimerView.startTimer();
         }
 
         @Override
         public void onExerciseStart(int time) {
             FSLogger.w(1, "ffff onExerciseStart");
             circleTimerView.setTime(time);
-//            circleTimerView.startTimer();
         }
 
         @Override
         public void onExerciseFinish() {
             FSLogger.w(1, "ffff onExerciseFinish");
-//            circleTimerView.stopTimer();
         }
 
         @Override
         public void onRestStart(int time) {
             FSLogger.w(1, "ffff onRestStart");
             circleTimerView.setTime(time);
-//            circleTimerView.startTimer();
         }
 
         @Override
         public void onRestFinish() {
             FSLogger.w(1, "ffff onRestFinish");
-//            circleTimerView.stopTimer();
         }
 
         @Override
-        public void onTrainingFinish(String msg) {
+        public void onTrainingFinish(Workout workout, String msg) {
             FSLogger.w(1, "ffff onTrainingFinish");
+            //Workout finished. Time to save into Database
+
+            btnStart.setVisibility(View.VISIBLE);
+            btnPause.setVisibility(View.GONE);
+            btnStop.setVisibility(View.GONE);
+
+            SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", Locale.ENGLISH);
+            String cDateTime=dateFormat.format(new Date());
+
+
+            //Save into Database
+            DatabaseHandler databaseHandler = new DatabaseHandler(getApplicationContext());
+            databaseHandler.addHistory(new History(0,
+                    workout.getName(),
+                    String.valueOf(workout.getWorkoutTime()),
+                    String.valueOf(workout.getRestTime()),
+                    workout.getRounds(),
+                    cDateTime));
+
+
+            //TODO Save into GOOGLE Fit
+        }
+
+        @Override
+        public void onTrainingTerminated(Workout workout, String msg) {
+
         }
 
         @Override
         public void onPauseTimer(long currenttime) {
-//            circleTimerView.pauseTimer((int) currenttime);
             FSLogger.w(1, "ffff onPauseTimer");
         }
     };
 
     @OnClick(R.id.btnPause)
     synchronized void clickPauseButton() {
-        if (trainingTimer.pauseTraining()) {
+        if (workoutTimer.pauseTraining()) {
             btnPause.setText(getText(R.string.Resume));
         } else {
             btnPause.setText(getText(R.string.Pause));
-            trainingTimer.runTraining();
+            workoutTimer.runTraining();
         }
     }
 
     @OnClick(R.id.btnStop)
     synchronized void clickStopButton() {
-        trainingTimer.stopTraining();
+        workoutTimer.stopTraining();
         btnStart.setVisibility(View.VISIBLE);
         btnPause.setVisibility(View.GONE);
         btnStop.setVisibility(View.GONE);
@@ -132,10 +155,16 @@ public class TimerActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnStart)
     synchronized void clickStartButton() {
-        trainingTimer.runTraining();
+        workoutTimer.runTraining();
 
         btnStart.setVisibility(View.GONE);
         btnPause.setVisibility(View.VISIBLE);
         btnStop.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        clickStopButton();
+        super.onBackPressed();
     }
 }

@@ -21,6 +21,8 @@
             android:label="@string/title_activity_timer"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity android:name=".HistoryActivity" >
+        </activity>
     </application>
 
 </manifest>

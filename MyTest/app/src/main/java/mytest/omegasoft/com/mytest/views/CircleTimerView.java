@@ -16,9 +16,6 @@ import android.view.View;
 
 import java.util.Timer;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class CircleTimerView extends View {
     private static final String TAG = "CircleTimerView";
 
@@ -98,14 +95,13 @@ public class CircleTimerView extends View {
     private boolean isInCircleButton;
     private int currentTime; // seconds
     private boolean isStartTimer;
-    @Getter @Setter private String currentStatus = "";
-    @Getter @Setter private int currentRound = 1;
+    private String currentStatus = "";
+    private int currentRound = 1;
 
     // TimerTask
     private Timer timer = new Timer();
 
     // Runt
-    private CircleTimerListener circleTimerListener;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -117,9 +113,7 @@ public class CircleTimerView extends View {
                 currentRadian = 0;
                 timer.cancel();
                 isStartTimer = false;
-                if (circleTimerListener != null) {
-                    circleTimerListener.onTimerStop();
-                }
+
             }
             invalidate();
         }
@@ -221,7 +215,7 @@ public class CircleTimerView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
+        currentTime = getTimeByRadian(currentRadian);
         // Assist lines
 //        canvas.drawColor(Color.RED);
         // canvas.drawLine(cx, 0, cx, getHeight(), new Paint());
@@ -387,7 +381,7 @@ public class CircleTimerView extends View {
             Bundle bundle = (Bundle) state;
             super.onRestoreInstanceState(bundle.getParcelable(INSTANCE_STATUS));
             currentRadian = bundle.getFloat(STATUS_RADIAN);
-            currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
+            currentTime = getTimeByRadian(currentRadian);
             return;
         }
         super.onRestoreInstanceState(state);
@@ -398,29 +392,38 @@ public class CircleTimerView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
-    public void setTime(int time) {
-        currentRadian = (float) ((time * (2 * Math.PI)) / 3600);
-        currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
+    private float getRadianByTime(int time) {
+        return (float) ((time * (2 * Math.PI)) / 3600);
     }
 
-    public void refreshView() {
+    private int getTimeByRadian(float radian) {
+        return (int) (radian * 10);
+    }
+
+    public void setTime(int time) {
+        currentRadian = getRadianByTime(time);
+        currentTime = getTimeByRadian(currentRadian);
+
         handler.obtainMessage().sendToTarget();
     }
 
-    // Set timer listener
-    public void setCircleTimerListener(CircleTimerListener circleTimerListener) {
-        this.circleTimerListener = circleTimerListener;
+    public void refreshView(int time, String workoutType, int round) {
+
+        currentRadian = getRadianByTime(time);
+//        currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
+//        currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
+
+//        currentRadian = degrees * (Math.PI/180);
+//        degrees = currentRound * (180/Math.PI);
+
+        currentStatus = workoutType;
+
+        currentRound = round;
+
+        handler.obtainMessage().sendToTarget();
     }
 
     public int getCurrentTime() {
         return currentTime;
-    }
-
-    public interface CircleTimerListener {
-        void onTimerStop();
-
-        void onTimerStart(int time);
-
-        void onTimerPause(int time);
     }
 }

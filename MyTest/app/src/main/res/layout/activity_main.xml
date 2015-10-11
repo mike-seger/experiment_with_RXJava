@@ -131,7 +131,7 @@
                 android:layout_width="@dimen/_150sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/Stop"
+                android:text="@string/Start"
                 android:textSize="@dimen/_20sdp"
                 android:visibility="visible" />
 

@@ -3,6 +3,9 @@ package mytest.omegasoft.com.mytest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,6 +20,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import fslogger.lizsoft.lv.fslogger.FSLogger;
 import mytest.omegasoft.com.mytest.callbacks.DialogCallback;
 import mytest.omegasoft.com.mytest.interfaces.Workout;
 import mytest.omegasoft.com.mytest.utils.utils;
@@ -128,5 +132,26 @@ public class MainActivity extends AppCompatActivity {
     @OnItemSelected(R.id.spinner)
     void onSelectSpinner(AdapterView<?> parent, View view, int position, long id) {
         setCurrWorkoutByPosition(position);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        FSLogger.w(1, "ffff menu called:" + item.getItemId());
+        switch (item.getItemId()){
+            case R.id.action_search:
+                startActivity(new Intent(this, HistoryActivity.class));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

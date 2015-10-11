@@ -1,3 +1,3 @@
 package mytest.omegasoft.com.mytest.interfaces;
 
-public enum TrainingType {Exercise, Rest}
+public enum WorkoutType {Exercise, Rest}
