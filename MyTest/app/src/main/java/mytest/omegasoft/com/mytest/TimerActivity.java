@@ -59,8 +59,6 @@ public class TimerActivity extends AppCompatActivity {
 
         workoutTimer = new WorkoutTimer(workoutCallback, currWorkout);
         circleTimerView.setTime(currWorkout.getWorkoutTime());
-
-        FSLogger.w(1, "ffff time:" + currWorkout.getWorkoutTime());
     }
 
     private WorkoutCallback workoutCallback = new WorkoutCallback() {
