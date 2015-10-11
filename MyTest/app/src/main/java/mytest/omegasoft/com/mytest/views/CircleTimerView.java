@@ -15,8 +15,10 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.Timer;
+import java.util.TimerTask;
 
-public class CircleTimerView extends View {
+public class CircleTimerView extends View
+{
     private static final String TAG = "CircleTimerView";
 
     // Status
@@ -101,38 +103,54 @@ public class CircleTimerView extends View {
     // TimerTask
     private Timer timer = new Timer();
 
-    // Runt
-    private Handler handler = new Handler() {
+    private TimerTask timerTask;
+
+    private Handler handler = new Handler()
+    {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(Message msg)
+        {
             Log.d(TAG, "handleMessage");
             super.handleMessage(msg);
-            if (currentRadian > 0 && currentTime > 0) {
+            if (currentRadian > 0 && currentTime > 0)
+            {
                 currentRadian -= (2 * Math.PI) / 3600;
-            } else {
+            }
+            else
+            {
                 currentRadian = 0;
                 timer.cancel();
                 isStartTimer = false;
-
+                if (circleTimerListener != null)
+                {
+                    circleTimerListener.onTimerStop();
+                }
             }
             invalidate();
         }
     };
 
-    public CircleTimerView(Context context, AttributeSet attrs, int defStyleAttr) {
+    // Runt
+    private CircleTimerListener circleTimerListener;
+
+    public CircleTimerView(Context context, AttributeSet attrs, int defStyleAttr)
+    {
         super(context, attrs, defStyleAttr);
         initialize();
     }
 
-    public CircleTimerView(Context context, AttributeSet attrs) {
+    public CircleTimerView(Context context, AttributeSet attrs)
+    {
         this(context, attrs, 0);
     }
 
-    public CircleTimerView(Context context) {
+    public CircleTimerView(Context context)
+    {
         this(context, null);
     }
 
-    private void initialize() {
+    private void initialize()
+    {
         Log.d(TAG, "initialize");
         // Set default dimension or read xml attributes
         gapBetweenCircleAndLine = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_GAP_BETWEEN_CIRCLE_AND_LINE, getContext().getResources().getDisplayMetrics());
@@ -214,8 +232,9 @@ public class CircleTimerView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        currentTime = getTimeByRadian(currentRadian);
+    protected void onDraw(Canvas canvas)
+    {
+        currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
         // Assist lines
 //        canvas.drawColor(Color.RED);
         // canvas.drawLine(cx, 0, cx, getHeight(), new Paint());
@@ -224,19 +243,29 @@ public class CircleTimerView extends View {
         // Content
         canvas.drawCircle(cx, cy, radius, circlePaint);
         canvas.save();
-        for (int i = 0; i < 120; i++) {
+        for (int i = 0; i < 120; i++)
+        {
             canvas.save();
             canvas.rotate(360 / 120 * i, cx, cy);
-            if (i % 30 == 0) {
-                if (360 / 120 * i <= Math.toDegrees(currentRadian)) {
+            if (i % 30 == 0)
+            {
+                if (360 / 120 * i <= Math.toDegrees(currentRadian))
+                {
                     canvas.drawLine(cx, getMeasuredHeight() / 2 - radius + circleStorkeWidth / 2 + gapBetweenCircleAndLine, cx, getMeasuredHeight() / 2 - radius + circleStorkeWidth / 2 + gapBetweenCircleAndLine + longerLineLength, highlightLinePaint);
-                } else {
+                }
+                else
+                {
                     canvas.drawLine(cx, getMeasuredHeight() / 2 - radius + circleStorkeWidth / 2 + gapBetweenCircleAndLine, cx, getMeasuredHeight() / 2 - radius + circleStorkeWidth / 2 + gapBetweenCircleAndLine + longerLineLength, linePaint);
                 }
-            } else {
-                if (360 / 120 * i <= Math.toDegrees(currentRadian)) {
+            }
+            else
+            {
+                if (360 / 120 * i <= Math.toDegrees(currentRadian))
+                {
                     canvas.drawLine(cx, getMeasuredHeight() / 2 - radius + circleStorkeWidth / 2 + gapBetweenCircleAndLine, cx, getMeasuredHeight() / 2 - radius + circleStorkeWidth / 2 + gapBetweenCircleAndLine + lineLength, highlightLinePaint);
-                } else {
+                }
+                else
+                {
                     canvas.drawLine(cx, getMeasuredHeight() / 2 - radius + circleStorkeWidth / 2 + gapBetweenCircleAndLine, cx, getMeasuredHeight() / 2 - radius + circleStorkeWidth / 2 + gapBetweenCircleAndLine + lineLength, linePaint);
                 }
             }
@@ -270,7 +299,8 @@ public class CircleTimerView extends View {
         super.onDraw(canvas);
     }
 
-    private float getFontHeight(Paint paint) {
+    private float getFontHeight(Paint paint)
+    {
         // FontMetrics sF = paint.getFontMetrics();
         // return sF.descent - sF.ascent;
         Rect rect = new Rect();
@@ -279,29 +309,39 @@ public class CircleTimerView extends View {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction() & event.getActionMasked()) {
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        switch (event.getAction() & event.getActionMasked())
+        {
             case MotionEvent.ACTION_DOWN:
                 // If the point in the circle button
-                if (isInCircleButton(event.getX(), event.getY())) {
+                if (isInCircleButton(event.getX(), event.getY()))
+                {
                     isInCircleButton = true;
                     preRadian = getRadian(event.getX(), event.getY());
                     Log.d(TAG, "In circle button");
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (isInCircleButton) {
+                if (isInCircleButton)
+                {
                     float temp = getRadian(event.getX(), event.getY());
-                    if (preRadian > Math.toRadians(270) && temp < Math.toRadians(90)) {
+                    if (preRadian > Math.toRadians(270) && temp < Math.toRadians(90))
+                    {
                         preRadian -= 2 * Math.PI;
-                    } else if (preRadian < Math.toRadians(90) && temp > Math.toRadians(270)) {
+                    }
+                    else if (preRadian < Math.toRadians(90) && temp > Math.toRadians(270))
+                    {
                         preRadian = (float) (temp + (temp - 2 * Math.PI) - preRadian);
                     }
                     currentRadian += (temp - preRadian);
                     preRadian = temp;
-                    if (currentRadian > 2 * Math.PI) {
+                    if (currentRadian > 2 * Math.PI)
+                    {
                         currentRadian = (float) (2 * Math.PI);
-                    } else if (currentRadian < 0) {
+                    }
+                    else if (currentRadian < 0)
+                    {
                         currentRadian = 0;
                     }
 
@@ -309,7 +349,8 @@ public class CircleTimerView extends View {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (isInCircleButton) {
+                if (isInCircleButton)
+                {
                     isInCircleButton = false;
                 }
                 break;
@@ -318,27 +359,35 @@ public class CircleTimerView extends View {
     }
 
     // Whether the down event inside circle button
-    private boolean isInCircleButton(float x, float y) {
+    private boolean isInCircleButton(float x, float y)
+    {
         float r = radius - circleStorkeWidth / 2 - gapBetweenCircleAndLine - lineLength / 2;
         float x2 = (float) (cx + r * Math.sin(currentRadian));
         float y2 = (float) (cy - r * Math.cos(currentRadian));
-        if (Math.sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2)) < circleButtonRadius) {
+        if (Math.sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2)) < circleButtonRadius)
+        {
             return true;
         }
         return false;
     }
 
     // Use tri to cal radian
-    private float getRadian(float x, float y) {
+    private float getRadian(float x, float y)
+    {
         float alpha = (float) Math.atan((x - cx) / (cy - y));
         // Quadrant
-        if (x > cx && y > cy) {
+        if (x > cx && y > cy)
+        {
             // 2
             alpha += Math.PI;
-        } else if (x < cx && y > cy) {
+        }
+        else if (x < cx && y > cy)
+        {
             // 3
             alpha += Math.PI;
-        } else if (x < cx && y < cy) {
+        }
+        else if (x < cx && y < cy)
+        {
             // 4
             alpha = (float) (2 * Math.PI + alpha);
         }
@@ -346,7 +395,8 @@ public class CircleTimerView extends View {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+    {
         Log.d(TAG, "onMeasure");
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         // Ensure width = height
@@ -355,10 +405,13 @@ public class CircleTimerView extends View {
         this.cx = width / 2;
         this.cy = height / 2;
         // Radius
-        if (lineLength / 2 + gapBetweenCircleAndLine + circleStorkeWidth >= (circleButtonRadius + shadowRadius)) {
+        if (lineLength / 2 + gapBetweenCircleAndLine + circleStorkeWidth >= (circleButtonRadius + shadowRadius))
+        {
             this.radius = width / 2 - circleStorkeWidth / 2;
             Log.d(TAG, "No exceed");
-        } else {
+        }
+        else
+        {
             this.radius = width / 2 - (circleButtonRadius + shadowRadius - gapBetweenCircleAndLine - lineLength / 2 - circleStorkeWidth / 2);
             Log.d(TAG, "Exceed");
         }
@@ -366,7 +419,8 @@ public class CircleTimerView extends View {
     }
 
     @Override
-    protected Parcelable onSaveInstanceState() {
+    protected Parcelable onSaveInstanceState()
+    {
         Log.d(TAG, "onSaveInstanceState");
         Bundle bundle = new Bundle();
         bundle.putParcelable(INSTANCE_STATUS, super.onSaveInstanceState());
@@ -375,46 +429,35 @@ public class CircleTimerView extends View {
     }
 
     @Override
-    protected void onRestoreInstanceState(Parcelable state) {
+    protected void onRestoreInstanceState(Parcelable state)
+    {
         Log.d(TAG, "onRestoreInstanceState");
-        if (state instanceof Bundle) {
+        if (state instanceof Bundle)
+        {
             Bundle bundle = (Bundle) state;
             super.onRestoreInstanceState(bundle.getParcelable(INSTANCE_STATUS));
             currentRadian = bundle.getFloat(STATUS_RADIAN);
-            currentTime = getTimeByRadian(currentRadian);
+            currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
             return;
         }
         super.onRestoreInstanceState(state);
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    protected void onSizeChanged(int w, int h, int oldw, int oldh)
+    {
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
-    private float getRadianByTime(int time) {
-        return (float) ((time * (2 * Math.PI)) / 3600);
-    }
-
-    private int getTimeByRadian(float radian) {
-        return (int) (radian * 10);
-    }
-
+    //Set default Time
     public void setTime(int time) {
-        currentRadian = getRadianByTime(time);
-        currentTime = getTimeByRadian(currentRadian);
-
-        handler.obtainMessage().sendToTarget();
+        currentRadian = (float) ((time * (2 * Math.PI)) / 3600);
+        currentTime = (int) Math.round((60 / (2 * Math.PI) * currentRadian * 60));
     }
 
     public void refreshView(int time, String workoutType, int round) {
 
-        currentRadian = getRadianByTime(time);
-//        currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
-//        currentTime = (int) (60 / (2 * Math.PI) * currentRadian * 60);
-
-//        currentRadian = degrees * (Math.PI/180);
-//        degrees = currentRound * (180/Math.PI);
+       setTime(time);
 
         currentStatus = workoutType;
 
@@ -423,7 +466,61 @@ public class CircleTimerView extends View {
         handler.obtainMessage().sendToTarget();
     }
 
-    public int getCurrentTime() {
+    // Star timer
+    public void startTimer()
+    {
+        Log.d(TAG, "startTimer");
+        if (currentRadian > 0 && !isStartTimer) {
+
+            timerTask = new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    Log.d(TAG, "TimerTask");
+                    handler.obtainMessage().sendToTarget();
+                }
+            };
+            timer.schedule(timerTask, 1000, 1000);
+            isStartTimer = true;
+            if (this.circleTimerListener != null)
+            {
+                this.circleTimerListener.onTimerStart(currentTime);
+            }
+        }
+    }
+
+    // Pause timer
+    public void pauseTimer()
+    {
+        if (isStartTimer)
+        {
+            timerTask.cancel();
+            isStartTimer = false;
+            if (this.circleTimerListener != null)
+            {
+                this.circleTimerListener.onTimerPause(currentTime);
+            }
+        }
+    }
+
+    // Set timer listener
+    public void setCircleTimerListener(CircleTimerListener circleTimerListener)
+    {
+        this.circleTimerListener = circleTimerListener;
+    }
+
+    public interface CircleTimerListener
+    {
+        void onTimerStop();
+
+        void onTimerStart(int time);
+
+        void onTimerPause(int time);
+    }
+
+    public int getCurrentTime()
+    {
         return currentTime;
     }
 }
